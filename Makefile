@@ -12,6 +12,23 @@ ifeq (x$(PS2SDKSRC), x)
   export PS2SDKSRC=$(shell pwd)
 endif
 
+# Run "make C=1" or define BUILD_CHECKSRC=1 to call a source code checker as
+# part of the C compilation. Set CHECK to configure your checker program
+# ("sparse" by default). Note that only re-compiled files are checked.
+
+ifeq ("$(origin C)", "command line")
+  BUILD_CHECKSRC = $(C)
+endif
+ifndef BUILD_CHECKSRC
+  BUILD_CHECKSRC = 0
+endif
+ifndef CHECK
+  CHECK = sparse
+endif
+
+export BUILD_CHECKSRC CHECK
+
+
 SUBDIRS = tools iop ee common samples
 
 all: build 

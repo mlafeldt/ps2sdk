@@ -8,6 +8,10 @@
 #
 # $Id$
 
+ifeq ($(BUILD_CHECKSRC),1)
+  export REAL_CC := $(CC)
+  export CC = cgcc
+endif
 
 # C compiler flags
 TOOLS_CFLAGS := -O2 -Wall $(TOOLS_CFLAGS)

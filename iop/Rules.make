@@ -11,6 +11,11 @@
 
 IOP_CC_VERSION := $(shell $(IOP_CC) --version 2>&1 | sed -n 's/^.*(GCC) //p')
 
+ifeq ($(BUILD_CHECKSRC),1)
+  export REAL_CC := $(IOP_CC)
+  export IOP_CC = cgcc
+endif
+
 ASFLAGS_TARGET = -mcpu=r3000
 
 ifeq ($(IOP_CC_VERSION),3.2.2)

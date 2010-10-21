@@ -8,6 +8,11 @@
 #
 # $Id$
 
+ifeq ($(BUILD_CHECKSRC),1)
+  export REAL_CC := $(EE_CC)
+  export EE_CC = cgcc
+endif
+
 EE_INCS := $(EE_INCS) -I$(PS2SDKSRC)/ee/kernel/include -I$(PS2SDKSRC)/common/include -I$(PS2SDKSRC)/ee/libc/include -I$(PS2SDKSRC)/ee/erl/include -Iinclude
 
 # C compiler flags
@@ -27,7 +32,6 @@ EE_ASFLAGS := $(EE_ASFLAGS)
 # These macros can be used to simplify certain build rules.
 EE_C_COMPILE = $(EE_CC) $(EE_CFLAGS) $(EE_INCS)
 EE_CXX_COMPILE = $(EE_CXX) $(EE_CXXFLAGS) $(EE_INCS)
-
 
 $(EE_OBJS_DIR)%.o : $(EE_SRC_DIR)%.c
 	$(EE_CC) $(EE_CFLAGS) $(EE_INCS) -c $< -o $@
