@@ -45,10 +45,10 @@ static void parse_boot_path(int argc, char ** argv) {
 static char * prohibit_list[] = {
     "_edata", "_end", "_end_bss", "_fbss", "_fdata", "_fini",
     "_ftext", "_gp", "_init", "main", 
-    0
+    NULL
 };
 
-static void export_symbols() {
+static void export_symbols(void) {
     struct export_list_t * p;
     int i, prohibit;
     
@@ -77,10 +77,10 @@ int main(int argc, char ** argv) {
     
     if (argc >= 2) {
 	for (i = 1; i < argc; i++) {
-	    _init_load_erl_from_file(argv[i], 0);
+	    _init_load_erl_from_file(argv[i], NULL);
 	}
     } else {
-	_init_load_erl_from_file("main.erl", 0);
+	_init_load_erl_from_file("main.erl", NULL);
     }
     
     if ((s = erl_find_symbol("main"))) {
