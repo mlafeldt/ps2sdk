@@ -45,8 +45,7 @@ This implements a hash table.
 
 /* sanity check -- make sure ipos, apos, and count make sense */
 #ifdef HSANITY
-static void  hsanity(t)
-htab *t;
+static void hsanity(htab *t)
 {
   ub4    i, end, counter;
   hitem *h;
@@ -82,8 +81,8 @@ htab *t;
  * move everything from the old array to the new array,
  * then free the old array.
  */
-static void hgrow( t)
-htab  *t;    /* table */
+static void hgrow(
+  htab  *t)    /* table */
 {
   register ub4     newsize = (ub4)1<<(++t->logsize);
   register ub4     newmask = newsize-1;
@@ -119,8 +118,8 @@ htab  *t;    /* table */
 }
 
 /* hcreate - create a hash table initially of size power(2,logsize) */
-htab *hcreate(logsize)
-word  logsize;    /* log base 2 of the size of the hash table */
+htab *hcreate(
+  word  logsize)    /* log base 2 of the size of the hash table */
 {
   ub4 i,len;
   htab *t = (htab *)malloc(sizeof(htab));
@@ -139,8 +138,8 @@ word  logsize;    /* log base 2 of the size of the hash table */
 }
 
 /* hdestroy - destroy the hash table and free all its memory */
-void hdestroy( t)
-htab  *t;    /* the table */
+void hdestroy(
+  htab  *t)    /* the table */
 {
   refree(t->space);
   free((char *)t->table);
@@ -153,10 +152,10 @@ htab  *t;    /* the table */
 /* hstuff() is a macro, see hashtab.h */
 
 /* hfind - find an item with a given key in a hash table */
-word   hfind( t, key, keyl )
-htab  *t;     /* table */
-ub1   *key;   /* key to find */
-ub4    keyl;  /* key length */
+word hfind(
+  htab  *t,     /* table */
+  ub1   *key,   /* key to find */
+  ub4    keyl)  /* key length */
 {
   hitem *h;
   ub4    x = lookup(key,keyl,0);
@@ -179,11 +178,11 @@ ub4    keyl;  /* key length */
  * hadd - add an item to a hash table.
  * return FALSE if the key is already there, otherwise TRUE.
  */
-word hadd( t, key, keyl, stuff)
-htab  *t;      /* table */
-ub1   *key;    /* key to add to hash table */
-ub4    keyl;   /* key length */
-void  *stuff;  /* stuff to associate with this key */
+word hadd(
+  htab  *t,      /* table */
+  ub1   *key,    /* key to add to hash table */
+  ub4    keyl,   /* key length */
+  void  *stuff)  /* stuff to associate with this key */
 {
   register hitem  *h,**hp;
   register ub4     y, x = lookup(key,keyl,0);
@@ -230,8 +229,8 @@ void  *stuff;  /* stuff to associate with this key */
 }
 
 /* hdel - delete the item at the current position */
-word  hdel(t)
-htab *t;      /* the hash table */
+word  hdel(
+  htab *t)      /* the hash table */
 {
   hitem  *h;    /* item being deleted */
   hitem **ip;   /* a counter */
@@ -259,8 +258,8 @@ htab *t;      /* the hash table */
 }
 
 /* hfirst - position on the first element in the table */
-word hfirst(t)
-htab  *t;    /* the hash table */
+word hfirst(
+  htab  *t)    /* the hash table */
 {
   t->apos = t->mask;
   (void)hnbucket(t);
@@ -273,8 +272,7 @@ htab  *t;    /* the hash table */
  * hnbucket - Move position to the first item in the next bucket.
  * Return TRUE if we did not wrap around to the beginning of the table
  */
-word hnbucket(t)
-htab *t;
+word hnbucket(htab *t)
 {
   ub4  oldapos = t->apos;
   ub4  end = (ub4)1<<(t->logsize);
@@ -306,8 +304,7 @@ htab *t;
 }
 
 #ifdef HSTAT
-void hstat(t)
-htab  *t;
+void hstat(htab *t)
 {
   ub4     i,j;
   double  total = 0.0;

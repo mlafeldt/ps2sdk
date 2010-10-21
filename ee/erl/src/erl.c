@@ -208,7 +208,7 @@ static const char * local_names[] = {
     "erl_copyright",
     "erl_version",
     "_start",
-    0
+    NULL
 };
 
 
@@ -271,14 +271,14 @@ struct dependancy_t {
 
 
 /* And our global variables. */
-static struct erl_record_t * erl_record_root = 0;
+static struct erl_record_t * erl_record_root = NULL;
 
-static htab * global_symbols = 0;
-static htab * loosy_relocs = 0;
+static htab * global_symbols = NULL;
+static htab * loosy_relocs = NULL;
 
 char _init_erl_prefix[256] = "";
 
-static struct dependancy_t * dependancy_root = 0;
+static struct dependancy_t * dependancy_root = NULL;
 
 
 static u32 align(u32 x, int align) {
@@ -301,11 +301,11 @@ static struct loosy_t * create_loosy(struct erl_record_t * erl, u8 * reloc, int 
     struct loosy_t * r;
 
     if (!(r = (struct loosy_t *) malloc(sizeof(struct loosy_t))))
-	return 0;
+	return NULL;
 
     r->reloc = reloc;
     r->type = type;
-    r->next = 0;
+    r->next = NULL;
     r->erl = erl;
 
     return r;
@@ -324,7 +324,7 @@ static void r_destroy_loosy(struct loosy_t * l) {
     destroy_loosy(l);
 }
 
-static reroot * symbol_recycle = 0;
+static reroot * symbol_recycle = NULL;
 
 static struct symbol_t * create_symbol(struct erl_record_t * provider, u32 address) {
     struct symbol_t * r;
@@ -344,18 +344,18 @@ static void destroy_symbol(struct symbol_t * s) {
     redel(symbol_recycle, s);
 }
 
-static struct erl_record_t * allocate_erl_record() {
+static struct erl_record_t * allocate_erl_record(void) {
     struct erl_record_t * r;
 
     if (!(r = (struct erl_record_t *) malloc(sizeof(struct erl_record_t))))
-	return 0;
+	return NULL;
 
     r->bytes = NULL;
     r->symbols = hcreate(6);
 
     if ((r->next = erl_record_root))
 	r->next->prev = r;
-    r->prev = 0;
+    r->prev = NULL;
     erl_record_root = r;
 
     r->flags = 0;
@@ -424,23 +424,23 @@ static int apply_reloc(u8 * reloc, int type, u32 addr) {
 
 struct symbol_t * erl_find_local_symbol(const char * symbol, struct erl_record_t * erl) {
     if (!erl)
-	return 0;
-    if (hfind(erl->symbols, symbol, strlen(symbol)))
+	return NULL;
+    if (hfind(erl->symbols, (u8 *) symbol, strlen(symbol)))
 	return hstuff(erl->symbols);
-    return 0;
+    return NULL;
 }
 
 static struct symbol_t * r_find_symbol(const char * symbol, struct erl_record_t * erl) {
     if (!erl)
-	return 0;
-    if (hfind(erl->symbols, symbol, strlen(symbol)))
+	return NULL;
+    if (hfind(erl->symbols, (u8 *) symbol, strlen(symbol)))
 	return hstuff(erl->symbols);
     return r_find_symbol(symbol, erl->next);
 }
 
 struct symbol_t * erl_find_symbol(const char * symbol) {
     if (global_symbols)
-	if (hfind(global_symbols, symbol, strlen(symbol)))
+	if (hfind(global_symbols, (u8 *) symbol, strlen(symbol)))
 	    return hstuff(global_symbols);
     return r_find_symbol(symbol, erl_record_root);
 }
@@ -449,10 +449,10 @@ static struct dependancy_t * add_dependancy(struct erl_record_t * depender, stru
     struct dependancy_t * d;
 
     if (depender == provider)
-	return 0;
+	return NULL;
 
     if (!(d = (struct dependancy_t *) malloc(sizeof(struct dependancy_t))))
-	return 0;
+	return NULL;
 
     d->depender = depender;
     d->provider = provider;
@@ -460,7 +460,7 @@ static struct dependancy_t * add_dependancy(struct erl_record_t * depender, stru
     if ((d->next = dependancy_root))
 	d->next->prev = d;
 
-    d->prev = 0;
+    d->prev = NULL;
     dependancy_root = d;
 
     return d;
@@ -502,7 +502,7 @@ static void add_loosy(struct erl_record_t * erl, u8 * reloc, int type, const cha
     if (!loosy_relocs)
 	loosy_relocs = hcreate(6);
 
-    if (!hadd(loosy_relocs, symbol, strlen(symbol), l)) {
+    if (!hadd(loosy_relocs, (u8 *) symbol, strlen(symbol), l)) {
 	l->next = hstuff(loosy_relocs);
 	hstuff(loosy_relocs) = l;
     } else {
@@ -517,7 +517,7 @@ static int fix_loosy(struct erl_record_t * provider, const char * symbol, u32 ad
     if (!loosy_relocs)
 	return count;
 
-    if (hfind(loosy_relocs, symbol, strlen(symbol))) {
+    if (hfind(loosy_relocs, (u8 *) symbol, strlen(symbol))) {
 	for (l = hstuff(loosy_relocs); l; l = l->next) {
 	    apply_reloc(l->reloc, l->type, address);
 	    add_dependancy(l->erl, provider);
@@ -570,23 +570,23 @@ static int add_symbol(struct erl_record_t * erl, const char * symbol, u32 addres
 }
 
 int erl_add_global_symbol(const char * symbol, u32 address) {
-    return add_symbol(0, symbol, address);
+    return add_symbol(NULL, symbol, address);
 }
 
 static int read_erl(int elf_handle, u8 * elf_mem, u32 addr, struct erl_record_t ** p_erl_record) {
     struct elf_header_t head;
-    struct elf_section_t * sec = 0;
-    struct elf_symbol_t * sym = 0;
+    struct elf_section_t * sec = NULL;
+    struct elf_symbol_t * sym = NULL;
     struct elf_reloc_t reloc;
     int i, j, erx_compressed;
-    char * names = 0, * strtab_names = 0, * reloc_section = 0;
+    char * names = NULL, * strtab_names = NULL, * reloc_section = NULL;
     int symtab = 0, strtab = 0, linked_strtab = 0;
     u8 * magic;
     u32 fullsize = 0;
-    struct erl_record_t * erl_record = 0;
+    struct erl_record_t * erl_record = NULL;
     struct symbol_t * s;
 
-    *p_erl_record = 0;
+    *p_erl_record = NULL;
 
 #define free_and_return(code) if (!elf_mem) { \
     if (names) free(names); \
@@ -944,7 +944,7 @@ static struct erl_record_t * load_erl(const char * fname, u8 * elf_mem, u32 addr
     if (fname) {
         if ((elf_handle = open(fname, O_RDONLY | O_BINARY)) < 0) {
     	    dprintf("Error operning erl file: %s\n", fname);
-	    return 0;
+	    return NULL;
 	}
     }
 
@@ -953,7 +953,7 @@ static struct erl_record_t * load_erl(const char * fname, u8 * elf_mem, u32 addr
 	if (fname) {
 	    close(elf_handle);
 	}
-	return 0;
+	return NULL;
     }
 
     if (fname) {
@@ -963,7 +963,7 @@ static struct erl_record_t * load_erl(const char * fname, u8 * elf_mem, u32 addr
 	if ((s = erl_find_local_symbol("erl_id", r))) {
 		r->name = *(char **) s->address;
 	} else {
-		r->name = 0;
+		r->name = NULL;
 	}
 
     dprintf("erl_id = %08X.\n", r->name);
@@ -971,7 +971,7 @@ static struct erl_record_t * load_erl(const char * fname, u8 * elf_mem, u32 addr
     if ((s = erl_find_local_symbol("erl_dependancies", r))) {
 	r->dependancies = (char **) s->address;
     } else {
-	r->dependancies = 0;
+	r->dependancies = NULL;
     }
 
     dprintf("erl_dependancies = %08X.\n", r->dependancies);
@@ -998,7 +998,7 @@ static struct erl_record_t * load_erl(const char * fname, u8 * elf_mem, u32 addr
         if ((_start_ret = ((start_t)s->address)(argc, argv))) {
 	    dprintf("Module's _start returned %i, unloading module.\n", _start_ret);
 	    if (unload_erl(r))
-		return 0;
+		return NULL;
 	}
 #endif
     }
@@ -1016,7 +1016,7 @@ struct erl_record_t * _init_load_erl_from_file(const char * fname, char * erl_id
     	    return r;
 
     argv[0] = erl_id;
-    argv[1] = 0;
+    argv[1] = NULL;
 
     strcpy(tfname, _init_erl_prefix);
     strcat(tfname, fname);
@@ -1025,25 +1025,25 @@ struct erl_record_t * _init_load_erl_from_file(const char * fname, char * erl_id
 }
 
 struct erl_record_t * load_erl_from_file(const char * fname, int argc, char ** argv) {
-    return load_erl(fname, 0, ERL_DYN_ADDR, argc, argv);
+    return load_erl(fname, NULL, ERL_DYN_ADDR, argc, argv);
 }
 
 struct erl_record_t * load_erl_from_mem(u8 * mem, int argc, char ** argv) {
-    return load_erl(0, mem, ERL_DYN_ADDR, argc, argv);
+    return load_erl(NULL, mem, ERL_DYN_ADDR, argc, argv);
 }
 
 /*
  * Load ERL from memory and relocate it at a specific memory address.
  */
 struct erl_record_t * load_erl_from_mem_to_addr(u8 * mem, u32 addr, int argc, char ** argv) {
-    return load_erl(0, mem, addr, argc, argv);
+    return load_erl(NULL, mem, addr, argc, argv);
 }
 
 /*
  * Load ERL from file and relocate it at a specific memory address.
  */
 struct erl_record_t * load_erl_from_file_to_addr(const char * fname, u32 addr, int argc, char ** argv) {
-    return load_erl(fname, 0, addr, argc, argv);
+    return load_erl(fname, NULL, addr, argc, argv);
 }
 
 /*
@@ -1059,7 +1059,7 @@ struct erl_record_t * _init_load_erl_from_file_to_addr(const char * fname, u32 a
     	    return r;
 
     argv[0] = erl_id;
-    argv[1] = 0;
+    argv[1] = NULL;
 
     strcpy(tfname, _init_erl_prefix);
     strcat(tfname, fname);
@@ -1067,7 +1067,7 @@ struct erl_record_t * _init_load_erl_from_file_to_addr(const char * fname, u32 a
     return load_erl_from_file_to_addr(tfname, addr, 1, argv);
 }
 
-void r_unload_dependancies(char ** d) {
+static void r_unload_dependancies(char ** d) {
     struct erl_record_t * erl;
     if (!(*d))
 	return;
@@ -1124,7 +1124,7 @@ struct erl_record_t * erl_resolve(u32 address) {
 	    return r;
     }
 
-    return 0;
+    return NULL;
 }
 
 struct erl_record_t * find_erl(const char * name) {
@@ -1136,7 +1136,7 @@ struct erl_record_t * find_erl(const char * name) {
 		return r;
     }
 
-    return 0;
+    return NULL;
 }
 
 void erl_flush_symbols(struct erl_record_t * erl) {
@@ -1151,7 +1151,7 @@ void erl_flush_symbols(struct erl_record_t * erl) {
 
     hdestroy(erl->symbols);
 
-    erl->symbols = 0;
+    erl->symbols = NULL;
 }
 
 #ifdef STANDALONE
