@@ -57,7 +57,7 @@ void *_rpc_get_packet(struct rpc_data *rpc_data)
 	if (len > 0) {
 		packet = (SifRpcPktHeader_t *)rpc_data->pkt_table;
 
-		for (rid = 0; rid < len; rid++, (u8 *)packet += 64) {
+		for (rid = 0; rid < len; rid++, *(u8*)&packet += RPC_PACKET_SIZE) {
 			if (!(packet->rec_id & PACKET_F_ALLOC))
 				break;
 		}
@@ -254,14 +254,14 @@ static u8 rdata_table[2048];
 static u8 client_table[2048];
 
 struct rpc_data _sif_rpc_data = {
-	pid:			1,
-	pkt_table:		pkt_table,
-	pkt_table_len:		sizeof(pkt_table)/RPC_PACKET_SIZE,
-	rdata_table:		rdata_table,
-	rdata_table_len:	sizeof(rdata_table)/RPC_PACKET_SIZE,
-	client_table:		client_table,
-	client_table_len:	sizeof(client_table)/RPC_PACKET_SIZE,
-	rdata_table_idx:	0
+	.pid 			= 1,
+	.pkt_table		= pkt_table,
+	.pkt_table_len		= sizeof(pkt_table)/RPC_PACKET_SIZE,
+	.rdata_table		= rdata_table,
+	.rdata_table_len	= sizeof(rdata_table)/RPC_PACKET_SIZE,
+	.client_table		= client_table,
+	.client_table_len	= sizeof(client_table)/RPC_PACKET_SIZE,
+	.rdata_table_idx	= 0
 };
 
 static int init = 0;

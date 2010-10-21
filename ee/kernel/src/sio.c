@@ -80,7 +80,7 @@ int sio_putc(int c)
 #endif
 
 #ifdef F_sio_getc
-int sio_getc()
+int sio_getc(void)
 {
 	/* Do we have something in the RX FIFO?  */
 	if (_lw(SIO_ISR) & 0xf00) {
@@ -97,7 +97,7 @@ int sio_getc()
 #ifdef F_sio_getc_block
 // Same as above, but blocking.
 // Note that getc should be blocking by default. Ho well.
-int sio_getc_block()
+int sio_getc_block(void)
 {
 	/* Do we have something in the RX FIFO?  */
 	while (!(_lw(SIO_ISR) & 0xf00));
@@ -189,7 +189,7 @@ char *sio_gets(char *str)
 
 #ifdef F_sio_flush
 // Flushes the input buffer.
-void sio_flush()
+void sio_flush(void)
 {
     u8 b;
     while (_lw(SIO_ISR) & 0xf00)

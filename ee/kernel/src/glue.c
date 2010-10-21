@@ -14,7 +14,7 @@
 #include "kernel.h"
 
 #ifdef F_DIntr
-int DIntr()
+int DIntr(void)
 {
 	int eie, res;
 
@@ -38,7 +38,7 @@ int DIntr()
 #endif
 
 #ifdef F_EIntr
-int EIntr()
+int EIntr(void)
 {
 	int eie;
 

@@ -421,28 +421,30 @@ void configSetDaylightSavingEnabled(s32 daylightSaving)
 // the following functions are all used in time conversion
 
 #ifdef F_configGetTime
-u8 frombcd(u8 bcd)
+static u8 frombcd(u8 bcd)
 {
 	return bcd - (bcd>>4)*6;
 }
-u8 tobcd(u8 dec)
+
+static u8 tobcd(u8 dec)
 {
 	return dec + (dec/10)*6;
 }
 
-void converttobcd(CdvdClock_t* time)
+static void converttobcd(CdvdClock_t* time)
 {
-	time->second= tobcd(time->second);
-	time->minute= tobcd(time->minute);
+	time->second	= tobcd(time->second);
+	time->minute	= tobcd(time->minute);
 	time->hour	= tobcd(time->hour);
 	time->day	= tobcd(time->day);
 	time->month	= tobcd(time->month);
 	time->year	= tobcd(time->year);
 }
-void convertfrombcd(CdvdClock_t* time)
+
+static void convertfrombcd(CdvdClock_t* time)
 {
-	time->second= frombcd(time->second);
-	time->minute= frombcd(time->minute);
+	time->second	= frombcd(time->second);
+	time->minute	= frombcd(time->minute);
 	time->hour	= frombcd(time->hour);
 	time->day	= frombcd(time->day);
 	time->month	= frombcd(time->month);
@@ -453,7 +455,7 @@ static u8 gDaysInMonths[12] = {
 	31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
 };
 
-void adddate(CdvdClock_t* time)
+static void adddate(CdvdClock_t* time)
 {
 	// get the days in each month and fix up feb depending on leap year
 	u8 days_in_months[12];
@@ -482,7 +484,8 @@ void adddate(CdvdClock_t* time)
 		}
 	}
 }
-void subdate(CdvdClock_t* time)
+
+static void subdate(CdvdClock_t* time)
 {
 	// get the days in each month and fix up feb depending on leap year
 	u8 days_in_months[12];
@@ -511,7 +514,7 @@ void subdate(CdvdClock_t* time)
 	}
 }
 
-void addhour(CdvdClock_t* time)
+static void addhour(CdvdClock_t* time)
 {
 	time->hour++;
 	if(time->hour == 24)
@@ -520,7 +523,8 @@ void addhour(CdvdClock_t* time)
 		time->hour = 0;
 	}
 }
-void subhour(CdvdClock_t* time)
+
+static void subhour(CdvdClock_t* time)
 {
 	if(time->hour == 0)
 	{
@@ -531,7 +535,7 @@ void subhour(CdvdClock_t* time)
 		time->hour--;
 }
 
-void AdjustTime(CdvdClock_t* time, s32 offset)
+static void AdjustTime(CdvdClock_t* time, s32 offset)
 {
 	convertfrombcd(time);
 	offset += time->minute;

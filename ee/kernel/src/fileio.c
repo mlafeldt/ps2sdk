@@ -63,7 +63,7 @@ extern int _fio_recv_data[512];
 extern int _fio_intr_data[32];
 
 void _fio_read_intr(struct _fio_read_data *);
-void _fio_intr();
+void _fio_intr(void);
 
 #ifdef F___fio_internals
 SifRpcClientData_t _fio_cd;
@@ -75,7 +75,7 @@ int _fio_completion_sema = -1;
 #endif
 
 #ifdef F_fio_init
-int fioInit()
+int fioInit(void)
 {
 	int res;
 	ee_sema_t compSema;
@@ -121,7 +121,7 @@ int fioInit()
 #endif
 
 #ifdef F__fio_intr
-void _fio_intr()
+void _fio_intr(void)
 {
 	iSignalSema(_fio_completion_sema);
 }
@@ -176,7 +176,7 @@ void fioSetBlockMode(int blocking)
 #endif
 
 #ifdef F_fio_exit
-void fioExit()
+void fioExit(void)
 {
 	_fio_init = 0;
 	memset(&_fio_cd, 0, sizeof _fio_cd);

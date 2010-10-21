@@ -76,7 +76,7 @@ int _lf_init = 0;
 
     Initializes the LOADFILE API and binds to the remote LOADFILE RPC server.
 */
-int SifLoadFileInit()
+int SifLoadFileInit(void)
 {
 	int res;
 	static int _rb_count = 0;
@@ -110,7 +110,7 @@ int SifLoadFileInit()
 
     Deinitializes the LOADFILE library in preparation of an IOP reset.
 */
-void SifLoadFileExit()
+void SifLoadFileExit(void)
 {
 	_lf_init = 0;
 	memset(&_lf_cd, 0, sizeof _lf_cd);

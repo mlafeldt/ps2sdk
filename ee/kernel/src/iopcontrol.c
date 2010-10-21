@@ -21,11 +21,10 @@
 
 #define RESET_ARG_MAX	79
 
+extern int _iop_reboot_count;
 #ifdef F___iop_control_internals
 int _iop_reboot_count = 0;
 #endif
-
-extern int _iop_reboot_count;
 
 #ifdef F_SifIopReset
 
@@ -107,7 +106,7 @@ int SifIopReboot(const char* filename)
 #endif
 
 #ifdef F_SifResetIop
-int SifResetIop()
+int SifResetIop(void)
 {
 	int ret;
 
@@ -120,14 +119,14 @@ int SifResetIop()
 #endif
 
 #ifdef F_SifIopIsAlive
-int SifIopIsAlive()
+int SifIopIsAlive(void)
 {
 	return ((SifGetReg(SIF_REG_SMFLAG) & 0x10000) != 0);
 }
 #endif
 
 #ifdef F_SifIopSync
-int SifIopSync()
+int SifIopSync(void)
 {
 	if (SifGetReg(SIF_REG_SMFLAG) & 0x40000) {
 		return 1;

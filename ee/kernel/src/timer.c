@@ -12,6 +12,7 @@
 */
 
 #include <tamtypes.h>
+#include <timer.h>
 
 #ifdef F_cpu_ticks
 u32 cpu_ticks(void) {

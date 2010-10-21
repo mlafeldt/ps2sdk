@@ -47,7 +47,7 @@ struct cmd_data {
 
 extern int _iop_reboot_count;
 extern struct cmd_data _sif_cmd_data;
-int _SifCmdIntHandler();
+s32 _SifCmdIntHandler(s32 channel);
 
 #ifdef F_sif_cmd_send
 static u32 _SifSendCmd(int cid, int mode, void *pkt, u32 pktsize, void *src,
@@ -113,7 +113,7 @@ iSifSendCmd( int command, void *send_data, int send_len,
 #endif
 
 #ifdef F__sif_cmd_int_handler
-int _SifCmdIntHandler()
+s32 _SifCmdIntHandler(s32 channel)
 {
 	u128 packet[8];
 	u128 *pktbuf;
@@ -181,13 +181,13 @@ static int sregs[32];
 /* I'd rather do this statically than to fill this in with code.  It's both
    smaller and faster to do it this way.  */
 struct cmd_data _sif_cmd_data = {
-	pktbuf:		pktbuf,
-	unused:		cmdbuf,
-	sys_cmd_handlers: sys_cmd_handlers,
-	nr_sys_handlers: CMD_HANDLER_MAX,
-	usr_cmd_handlers: usr_cmd_handlers,
-	nr_usr_handlers: CMD_HANDLER_MAX,
-	sregs:		sregs
+	.pktbuf			= pktbuf,
+	.unused			= cmdbuf,
+	.sys_cmd_handlers	= sys_cmd_handlers,
+	.nr_sys_handlers	= CMD_HANDLER_MAX,
+	.usr_cmd_handlers	= usr_cmd_handlers,
+	.nr_usr_handlers	= CMD_HANDLER_MAX,
+	.sregs			= sregs
 };
 
 static int init = 0;
@@ -220,7 +220,7 @@ static void set_sreg(void *packet, void *harg)
 	cmd_data->sregs[pkt->sreg] = pkt->val;
 }
 
-void SifInitCmd()
+void SifInitCmd(void)
 {
 	u32 packet[5];	/* Implicitly aligned to 16 bytes */
 	int i;
@@ -292,7 +292,7 @@ void SifInitCmd()
 	}
 }
 
-void SifExitCmd()
+void SifExitCmd(void)
 {
     DisableDmac(5);
     RemoveDmacHandler(5, sif0_id);

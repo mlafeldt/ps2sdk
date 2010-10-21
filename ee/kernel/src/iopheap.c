@@ -30,7 +30,7 @@ extern int _ih_caps;
 SifRpcClientData_t _ih_cd;
 int _ih_caps = 0;
 
-int SifInitIopHeap()
+int SifInitIopHeap(void)
 {
 	int res;
 
@@ -61,7 +61,7 @@ int SifInitIopHeap()
 #endif
 
 #ifdef F_SifExitIopHeap
-void SifExitIopHeap()
+void SifExitIopHeap(void)
 {
 	_ih_caps = 0;
 	memset(&_ih_caps, 0, sizeof _ih_caps);

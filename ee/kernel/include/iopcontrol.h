@@ -45,7 +45,7 @@ int SifIopSync(void);
  This is retained for compatibility.
  @return 1 for success or 0 for failure.
  */
-int SifResetIop();
+int SifResetIop(void);
 
 #ifdef __cplusplus
 }

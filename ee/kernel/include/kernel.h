@@ -102,7 +102,7 @@ static inline int ee_set_opmode(u32 opmode)
 	return((status >> 3) & 3);
 }
 
-static inline int ee_kmode_enter()
+static inline int ee_kmode_enter(void)
 {
 	u32 status, mask;
 
@@ -119,7 +119,7 @@ static inline int ee_kmode_enter()
 	return status;
 }
 
-static inline int ee_kmode_exit()
+static inline int ee_kmode_exit(void)
 {
 	int status;
 
