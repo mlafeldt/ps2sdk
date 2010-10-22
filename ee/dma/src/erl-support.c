@@ -17,5 +17,5 @@ char * erl_id = "libdma";
 char * erl_dependancies[] =
 {
     "libkernel",
-    0
+    NULL
 };
