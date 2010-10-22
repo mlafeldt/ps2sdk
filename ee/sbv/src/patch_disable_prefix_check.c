@@ -19,7 +19,7 @@
 
 extern slib_exp_lib_list_t _slib_cur_exp_lib_list;
 
-int sbv_patch_disable_prefix_check()
+int sbv_patch_disable_prefix_check(void)
 {
 	u8 buf[512];
 	u32 patch[2];

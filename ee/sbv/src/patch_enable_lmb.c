@@ -59,7 +59,7 @@ static u32 lmb_patch[32] = {
 	0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-int sbv_patch_enable_lmb()
+int sbv_patch_enable_lmb(void)
 {
 	u8 buf[256];
 	slib_exp_lib_t *modload_lib = (slib_exp_lib_t *)buf;

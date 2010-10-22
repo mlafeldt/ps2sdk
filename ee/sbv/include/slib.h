@@ -49,7 +49,7 @@ typedef struct _slib_exp_lib_list {
 } slib_exp_lib_list_t;
 
 /* Find the head and tail of the export library list.  */
-slib_exp_lib_list_t *slib_exp_lib_list();
+slib_exp_lib_list_t *slib_exp_lib_list(void);
 
 /* Retrieve an export library by name.  */
 int slib_get_exp_lib(const char *name, slib_exp_lib_t *library);

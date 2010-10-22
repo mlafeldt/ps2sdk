@@ -17,7 +17,7 @@
 #include "smem.h"
 #include "slib.h"
 
-slib_exp_lib_list_t _slib_cur_exp_lib_list = {0, 0};
+slib_exp_lib_list_t _slib_cur_exp_lib_list = { NULL, NULL };
 
 #define SEARCH_SIZE	(16 * 1024)
 static u8 smem_buf[SEARCH_SIZE];
@@ -44,12 +44,12 @@ int __memcmp(const void *s1, const void *s2, unsigned int length)
  *
  * This routine will need to be called everytime the IOP is reset.
  */
-slib_exp_lib_list_t *slib_exp_lib_list()
+slib_exp_lib_list_t *slib_exp_lib_list(void)
 {
 	slib_exp_lib_t *core_exps;
 	u32 *exp_func, *core_info;
 	u8 *smem_loc;	/* Current location into our IOP mem buffer.  */
-	slib_exp_lib_list_t *exp_lib_list = 0;
+	slib_exp_lib_list_t *exp_lib_list = NULL;
 	u32 i, addr, core_end, gmt_ofs = 0x800;
 
 	/* Read 16k of IOP RAM from the start of the global module table -
@@ -76,7 +76,7 @@ slib_exp_lib_list_t *slib_exp_lib_list()
 		}
 	}
 	if (i >= 512)
-		return 0;
+		return NULL;
 
 	/* Get to the start of the export table, and find the address of the
 	   routine that will get us the export library list info.  */
@@ -85,9 +85,9 @@ slib_exp_lib_list_t *slib_exp_lib_list()
 
 	/* Parse the two instructions that hold the address of the table.  */
 	if ((exp_func[0] & 0xffff0000) != 0x3c020000)	/* lui v0, XXXX */
-		return 0;
+		return NULL;
 	if ((exp_func[1] & 0xffff0000) != 0x24420000)	/* addiu v0, v0, XXXX */
-		return 0;
+		return NULL;
 
 	addr = (exp_func[0] & 0xffff) << 16;
 	addr |= exp_func[1] & 0xffff;
@@ -120,7 +120,7 @@ int slib_get_exp_lib(const char *name, slib_exp_lib_t *library)
 		smem_read(cur_lib, exp_lib, sizeof buf);
 
 		if (!__memcmp(exp_lib->name, name, len)) {
-			while (exp_lib->exports[count] != 0)
+			while (exp_lib->exports[count] != NULL)
 				count++;
 
 			if (library)

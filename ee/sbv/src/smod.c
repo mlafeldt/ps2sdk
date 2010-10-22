@@ -49,7 +49,7 @@ int smod_get_mod_by_name(const char *name, smod_mod_info_t *info)
 	u8 search_name[60];
 	int len = strlen(name);
 
-	if (!smod_get_next_mod(0, info))
+	if (!smod_get_next_mod(NULL, info))
 		return 0;
 
 	do {
