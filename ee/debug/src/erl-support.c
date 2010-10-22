@@ -17,5 +17,5 @@ char * erl_id = "libdebug";
 char * erl_dependancies[] = {
     "libkernel",
     "libc",
-    0
+    NULL
 };

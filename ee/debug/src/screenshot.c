@@ -11,11 +11,11 @@
 # Screenshot
 */
 
-#include "screenshot.h"
 #include <tamtypes.h>
 #include <kernel.h>
 #include <fileio.h>
 #include <io_common.h>
+#include <screenshot.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //

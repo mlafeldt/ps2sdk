@@ -23,7 +23,7 @@ EE_INCS = -I../graph/include -I../rpc/cdvd/include
 
 EE_LIB = $(LIBDEBUG_LIB)
 
-EE_OBJS  = scr_printf.o font.o screenshot.o callstack.o callstackget.o 
+EE_OBJS  = scr_printf.o screenshot.o callstack.o callstackget.o
 EE_OBJS += hwbp.o erl-support.o
 EE_OBJS := $(EE_OBJS:%=$(EE_OBJS_DIR)%)
 

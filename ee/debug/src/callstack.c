@@ -34,6 +34,8 @@ in this Software without prior written authorization from The Open Group.
  * address to discover the correct values
  */
 
+#include <stddef.h>
+
 /* lw $31,const($sp) is : 100 011 11101 11111 const */
 /*                        1000 1111 1011 1111       */
 
@@ -217,7 +219,7 @@ void ps2GetStackTrace(unsigned int* results,int max)
       ra = (unsigned int *) sp[rc->raOffset>>2];
       sp += rc->spAdjust >> 2;
       
-      if (ra == 0)
+      if (ra == NULL)
       {
         *results++ = 0;
         break;

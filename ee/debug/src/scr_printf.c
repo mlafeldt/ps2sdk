@@ -18,6 +18,7 @@
 #include <osd_config.h>
 #include <stdarg.h>
 #include <debug.h>
+#include "font.h"
 
 /* baseado nas libs do Duke... */
 
@@ -68,7 +69,7 @@ static struct t_setupchar setupchar __attribute__ (( aligned (16) )) = {
 static u32	charmap[64] __attribute__ (( aligned (16) ));
 
 // from gsKit
-static int debug_detect_signal()
+static int debug_detect_signal(void)
 {
    char romname[14];
    GetRomName((char *)romname);
@@ -89,7 +90,7 @@ static void Init_GS( int a, int b, int c)
    SetGsCrt( a & 1, b & 0xff, c & 1);
 }
 
-static void SetVideoMode()
+static void SetVideoMode(void)
 {
   unsigned dma_addr;
   unsigned val1;
@@ -119,7 +120,7 @@ static void SetVideoMode()
                 "=&r" (val3), "=&r" (val4), "=&r" (val4_lo) );
 }
 
-static inline void Dma02Wait()
+static inline void Dma02Wait(void)
 {
   unsigned dma_addr;
   unsigned status;
@@ -135,7 +136,7 @@ static inline void Dma02Wait()
                 : "=&r" (dma_addr), "=&r" (status) );
 }
 
-static void DmaReset()
+static void DmaReset(void)
 {
   unsigned dma_addr;
   unsigned temp;
@@ -196,7 +197,7 @@ void scr_setbgcolor(u32 color)
 	bgcolor = color;
 }
 
-void init_scr()
+void init_scr(void)
 {
    X = Y = 0;
    EI();
@@ -216,15 +217,12 @@ void init_scr()
    FlushCache(2);
 }
 
-extern u8 msx[];
-
-
 void
 _putchar( int x, int y, u32 color, u8 ch)
 {
-   int 	i,j, l;
-   u8	*font;
-   u32  pixel;
+   int 		i,j, l;
+   const u8	*font;
+   u32  	pixel;
    
    font = &msx[ (int)ch * 8];
    for (i=l=0; i < 8; i++, l+= 8, font++)
@@ -309,17 +307,17 @@ void scr_setXY(int x, int y)
 	if( y<MY && y>=0 ) Y=y;
 }
 
-int scr_getX()
+int scr_getX(void)
 {
 	return X;
 }
 
-int scr_getY()
+int scr_getY(void)
 {
 	return Y;
 }
 
-void scr_clear()
+void scr_clear(void)
 {
 	int y;
 	for(y=0;y<MY;y++)
